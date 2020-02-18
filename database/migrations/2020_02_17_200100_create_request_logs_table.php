@@ -17,27 +17,45 @@ class CreateRequestLogsTable extends Migration
         Schema::create('request_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            // method
-            // path
-            // query_string
-            // body
-            // referrer
+            // Request related
+            $table->enum('method', [
+                'GET',
+                'HEAD',
+                'POST',
+                'PUT',
+                'DELETE',
+                'CONNECT',
+                'OPTIONS',
+                'TRACE',
+                'PATCH'
+            ]);
+            
+            $table->string('path');
+            $table->string('query_string')->nullable()->default(null);
+            $table->json('body')->nullable()->default(null);
+            $table->string('referrer')->nullable()->default(null);
+            $table->string('user_agent');
+            $table->json('headers')->nullable()->default(null);
 
-            // user agent
-            // headers
+            // Can be changes to varbinary(16) or other field suited for IP like "inet" in postgres
+            // Now is simple varchar
+            $table->ipAddress('ip');
 
-            // ip
-            // country_code
-            // region 
-            // city
-            // lat
-            // long
+            // IP Geolocation related
+            $table->string('country_code')->nullable()->default(null);
+            $table->string('region')->nullable()->default(null);
+            $table->string('city')->nullable()->default(null);
+            $table->decimal('latitude', 11, 8)->nullable()->default(null);
+            $table->string('longitude', 11, 8)->nullable()->default(null);
 
-            // user_type
-            // user_id
+            // User related
+            $table->string('user_type')->nullable()->default(null);
+            $table->unsignedBigInteger('user_id')->nullable()->default(null);
 
-            // custom_attributes
+            // Custom/other
+            $table->json('custom_attributes')->nullable()->default(null);
 
+            // Date
             $table->timestamp('created_at')->nullable();
         });
     }
